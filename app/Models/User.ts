@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
-import { column, beforeSave, BaseModel } from '@ioc:Adonis/Lucid/Orm'
+import { column, beforeSave, BaseModel, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import { beforeFind, beforeFetch } from '@ioc:Adonis/Lucid/Orm'
 import { softDelete, softDeleteQuery } from 'App/Services/SoftDelete'
+import Post from 'App/Models/Post'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -42,4 +43,7 @@ export default class User extends BaseModel {
   public async softDelete(column?: string) {
     await softDelete(this, column)
   }
+
+  @hasMany(() => Post)
+  public profile: HasMany<typeof Post>
 }

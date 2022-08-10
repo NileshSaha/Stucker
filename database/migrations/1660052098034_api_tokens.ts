@@ -5,8 +5,8 @@ export default class ApiTokens extends BaseSchema {
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
-      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE')
+      table.bigIncrements('id').primary()
+      table.bigInteger('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE')
       table.string('name').notNullable()
       table.string('type').notNullable()
       table.string('token', 64).notNullable().unique()
@@ -16,7 +16,6 @@ export default class ApiTokens extends BaseSchema {
        */
       table.timestamp('expires_at', { useTz: true }).nullable()
       table.timestamp('created_at', { useTz: true }).notNullable()
-      table.timestamp('deleted_at').nullable()
     })
   }
 
