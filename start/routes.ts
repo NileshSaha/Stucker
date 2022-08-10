@@ -31,13 +31,16 @@ Route.group(() => {
     Route.post('register', 'AuthController.register')
   }).prefix('/auth')
 
-  //PostController
+  // Auth Middleware
   Route.group(() => {
-    Route.get('/list', 'PostsController.index')
-    Route.post('/create', 'PostsController.index')
-    Route.get('/show/:id', 'PostsController.show').where('id', {
-      match: /^[0-9]+$/,
-      cast: (id) => Number(id),
-    })
-  }).prefix('/post')
+    //PostController
+    Route.group(() => {
+      Route.get('list', 'PostsController.index')
+      Route.post('create', 'PostsController.create')
+      Route.get('show/:id', 'PostsController.show').where('id', {
+        match: /^[0-9]+$/,
+        cast: (id) => Number(id),
+      })
+    }).prefix('/posts')
+  }).middleware('auth')
 }).prefix('/api')
