@@ -1,13 +1,11 @@
 // import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Hash from '@ioc:Adonis/Core/Hash'
 import User from 'App/Models/User'
-import RegistrationRequestValidator from 'App/Validators/Auth/RegistrationRequestValidator'
-import Logger from '@ioc:Adonis/Core/Logger'
-
+import LoginValidator from 'App/Validators/Auth/LoginValidator'
+import RegistrationValidator from 'App/Validators/Auth/RegistrationValidator'
 export default class AuthController {
   public async login({ auth, request, response }) {
-    const email = request.input('email')
-    const password = request.input('password')
+    const { email, password } = await request.validate(LoginValidator)
 
     // Lookup user manually
     const user = await User.query().where('email', email).firstOrFail()
@@ -19,16 +17,15 @@ export default class AuthController {
 
     // Generate token
     const token = await auth.use('api').generate(user)
-    return response.success('Login successful', 200, { token })
+    return response.success('Login successful', 200, { token, user })
   }
 
   public async register({ request, response }) {
-    const payload = await request.validate(RegistrationRequestValidator)
-    Logger.info('payload', payload)
+    const payload = await request.validate(RegistrationValidator)
     const user = await User.create({
-      name: request.input('name'),
-      email: request.input('email'),
-      password: request.input('password'),
+      name: payload.name,
+      email: payload.email,
+      password: payload.password,
     })
     return response.success('Registered successfully', 201, { user })
   }
